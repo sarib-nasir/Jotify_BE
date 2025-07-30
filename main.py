@@ -15,16 +15,16 @@ app.add_middleware(
 # @app.post("/ask")
 def ask_llm():
     # data = await request.json()
-    question = "What is the capital of France? can you provide some details about it?"  # fallback default
+    question = "give me details about the following note: theoretical notes for REST api integration  "
 
     # Call the Ollama API
     ollama_response = requests.post(
         "http://localhost:11434/api/generate",
         headers={"Content-Type": "application/json"},
         json={
-            "model": "mistral",  # Change this if you want another model like "llama3", "mistral", etc.
+            "model": "mistral",
             "prompt": question,
-            "stream": False  # disables streaming output
+            "stream": False
         }
     )
 
