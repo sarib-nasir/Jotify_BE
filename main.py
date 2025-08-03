@@ -5,6 +5,8 @@ import requests
 # import openai
 import os
 
+from pydantic import BaseModel
+
 app = FastAPI()
 
 # Allow frontend to call the backend
@@ -50,33 +52,22 @@ async def ask_llm(request: Request):
 
         response_json = ollama_response.json()
         answer = response_json.get("response", "").strip()
+        apiResponse = ApiResponse()
+        apiResponse.data = answer
+        apiResponse.statusCode = "200"
+        return apiResponse
 
-        return answer
+from dataclasses import dataclass
+from typing import Any, Optional
+
+@dataclass
+class ApiResponse:
+    statusCode: str = "11"
+    message: str = "No data found"
+    data: Optional[Any] = None
+    Token: Optional[str] = None
+    typeId: Optional[str] = None
+    NetworkStatus: int = 0
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
-
-
-# @app.post("/ask")
-# async def ask_llm(request: Request):
-#     data = await request.json()
-#     question = data.get("question", "What is the capital of France?")
-#
-#     ollama_response = requests.post(
-#         "http://localhost:11434/api/generate",
-#         headers={"Content-Type": "application/json"},
-#         json={
-#             "model": "mistral",
-#             "prompt": question,
-#             "stream": False
-#         }
-#     )
-#
-#     if ollama_response.status_code != 200:
-#         return {"error": "Failed to get response from LLM", "details": ollama_response.text}
-#
-#     response_json = ollama_response.json()
-#     answer = response_json.get("response", "").strip()
-#
-#     return {"answer": answer}
