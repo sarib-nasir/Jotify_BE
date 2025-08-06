@@ -1,1 +1,22 @@
-openai
+# FastAPI core
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+
+# CORS handling (needed for Angular frontend requests)
+starlette==0.38.2
+python-multipart==0.0.9
+
+# Data validation and JSON parsing
+pydantic==2.8.2
+
+# Optional: Calling external LLM APIs (like OpenAI)
+httpx==0.27.0
+
+# Optional: For async requests to LLM or external APIs
+aiohttp==3.10.5
+
+# Optional: If you plan to store chats in SQLite (future feature)
+sqlalchemy==2.0.32
+
+# Optional: For working with environment variables (API keys)
+python-dotenv==1.0.1
