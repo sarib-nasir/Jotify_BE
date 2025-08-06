@@ -21,3 +21,5 @@ sqlalchemy==2.0.32
 # Optional: For working with environment variables (API keys)
 python-dotenv==1.0.1
 requests
+together
+dotenv

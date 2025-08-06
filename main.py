@@ -2,13 +2,16 @@ import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 import requests
+from together import Together
+from dotenv import load_dotenv
 # import openai
 import os
 
 from pydantic import BaseModel
 
 app = FastAPI()
-
+load_dotenv()
+api_key = os.environ.get("TOGETHER_API_KEY")
 # Allow frontend to call the backend
 app.add_middleware(
     CORSMiddleware,
@@ -19,9 +22,11 @@ app.add_middleware(
 
 @app.post("/api/ask_llm")
 async def ask_llm(request: Request):
+    apiResponse = ApiResponse()
     data = await request.json()
     # question = "what is the capitol of pakistan"
     chatGPT = False
+    deepSeek = True
     if chatGPT:
         return "feature under development"
         # response = openai.ChatCompletion.create(
@@ -36,6 +41,18 @@ async def ask_llm(request: Request):
         #
         # answer = response["choices"][0]["message"]["content"].strip()
         # return {"answer": answer}
+    elif deepSeek:
+        client = Together(api_key = api_key)
+
+        response = client.chat.completions.create(
+            model="deepseek-ai/DeepSeek-R1",
+            messages=[
+                {"role": "user", "content": data["data"]+" "+ data["prompt"]}
+            ],
+            stream=True
+        )
+        answer = response.choices[0].message.content
+        apiResponse.data = answer
     else:
         ollama_response = requests.post(
             "http://localhost:11434/api/generate",
@@ -52,10 +69,10 @@ async def ask_llm(request: Request):
 
         response_json = ollama_response.json()
         answer = response_json.get("response", "").strip()
-        apiResponse = ApiResponse()
+
         apiResponse.data = answer
-        apiResponse.statusCode = "200"
-        return apiResponse
+    apiResponse.statusCode = "200"
+    return apiResponse
 
 from dataclasses import dataclass
 from typing import Any, Optional
