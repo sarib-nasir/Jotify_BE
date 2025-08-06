@@ -42,7 +42,10 @@ async def ask_llm(request: Request):
         # answer = response["choices"][0]["message"]["content"].strip()
         # return {"answer": answer}
     elif deepSeek:
-        client = Together(api_key = api_key)
+        api_key = os.environ.get("TOGETHER_API_KEY")
+        if not api_key:
+            raise RuntimeError("TOGETHER_API_KEY is not set!")
+        client = Together(api_key=api_key)
 
         response = client.chat.completions.create(
             model="deepseek-ai/DeepSeek-R1",
